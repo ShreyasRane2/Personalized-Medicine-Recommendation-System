@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare+ - Health Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --light-bg: #ecf0f1;
+            --dark-text: #2c3e50;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 80px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link.active {
+            color: white !important;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+        }
+
+        /* Main Content */
+        .main-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .prediction-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border: none;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 1rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .btn-predict {
+            background: linear-gradient(135deg, var(--accent-color), #c0392b);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.3);
+            background: linear-gradient(135deg, #c0392b, var(--accent-color));
+        }
+
+        .btn-speech {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-speech:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Symptom Buttons */
+        .symptoms-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px dashed #dee2e6;
+        }
+
+        .symptom-category {
+            margin-bottom: 2rem;
+        }
+
+        .category-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        .symptom-btn {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            color: #1976d2;
+            padding: 0.5rem 1rem;
+            margin: 0.3rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .symptom-btn:hover {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .symptom-btn.selected {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .clear-symptoms {
+            background: linear-gradient(135deg, #ff5722, #d84315);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .clear-symptoms:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+        }
+
+        .results-section {
+            margin-top: 3rem;
+        }
+
+        .result-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-btn {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .result-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-disease { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .btn-description { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .btn-precaution { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .btn-medications { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .btn-workouts { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .btn-diets { background: linear-gradient(135deg, #f1c40f, #f39c12); }
+
+        .btn-download {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            margin-top: 2rem;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .download-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+            text-align: center;
+            border: 2px solid #27ae60;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 1.5rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+
+        .modal-body ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modal-body li {
+            background: white;
+            margin: 0.5rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .transcription {
+            background: #e8f5e8;
+            border: 2px dashed #27ae60;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #27ae60;
+            font-style: italic;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+
+        .feature-highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* Age-specific styling */
+        .badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+        }
+
+        .badge-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .badge-info {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .age-alert {
+            border-left: 4px solid #f39c12;
+            background-color: #fff8e1;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+        }
+
+        .age-info {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            background: #e3f2fd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .result-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .result-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .symptom-btn {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+            <i class="fas fa-heartbeat me-2"></i>MediCare AI
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('dashboard') }}">
+                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('about') }}">
+                        <i class="fas fa-info-circle me-1"></i>About
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('contact') }}">
+                        <i class="fas fa-envelope me-1"></i>Contact
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('profile') }}">
+                        <i class="fas fa-user me-1"></i>Profile
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                {% if session['username'] %}
+                <span class="navbar-text text-white me-3">
+                    <i class="fas fa-user-circle me-1"></i>Hello, {{ session['username'] }}
+                    {% if user_age %}
+                    <span class="age-info">{{ user_age }} years</span>
+                    {% endif %}
+                </span>
+                <a class="btn btn-outline-light" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Header Section -->
+    <div class="main-header">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-stethoscope me-3"></i>Personalized Medicine Recommendation System
+        </h1>
+        <p class="lead">Describe your symptoms and get personalized health recommendations</p>
+    </div>
+
+    <!-- Symptom Input Form -->
+    <div class="prediction-card">
+        <div class="feature-highlight mb-4">
+            <h4><i class="fas fa-robot me-2"></i>Smart Symptom Analysis</h4>
+            <p class="mb-0">Enter at least 3 symptoms for accurate health predictions</p>
+        </div>
+
+        <form action="/predict" method="POST">
+            <div class="mb-4">
+                <label for="symptoms" class="form-label h5">
+                    <i class="fas fa-notes-medical me-2"></i>Describe Your Symptoms
+                </label>
+                <input type="text" 
+                       class="form-control" 
+                       id="symptoms" 
+                       name="symptoms" 
+                       placeholder="e.g., fever, headache, cough, fatigue..." 
+                       required>
+                <div class="form-text">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Separate multiple symptoms with commas. Be as specific as possible.
+                </div>
+            </div>
+
+            <!-- Common Symptoms Section -->
+            
+
+             
+            </div>
+
+            <!-- Speech Recognition -->
+            <div class="mb-4">
+                <button type="button" id="startSpeechRecognition" class="btn btn-speech">
+                    <i class="fas fa-microphone me-2"></i>Use Voice Input
+                </button>
+                <div id="transcription" class="transcription" style="display: none;">
+                    <i class="fas fa-microphone-alt me-2"></i>
+                    <span id="transcriptionText">Click the microphone and start speaking...</span>
+                </div>
+            </div>
+
+            <!-- Error/Success Messages -->
+            {% if message %}
+            <div class="alert alert-warning" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ message }}
+            </div>
+            {% endif %}
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-predict">
+                <i class="fas fa-search me-2"></i>Analyze Symptoms
+            </button>
+        </form>
+    </div>
+
+    <!-- Results Section -->
+    {% if predicted_disease %}
+    <div class="results-section">
+        <div class="text-center mb-4">
+            <h2 class="display-5 fw-bold text-primary">
+                <i class="fas fa-chart-line me-3"></i>Analysis Results
+            </h2>
+            <p class="lead text-muted">Your personalized health recommendations are ready</p>
+        </div>
+
+        <div class="result-buttons">
+            <button class="result-btn btn-disease" data-bs-toggle="modal" data-bs-target="#diseaseModal">
+                <i class="fas fa-diagnoses me-2"></i>Predicted Condition
+            </button>
+            <button class="result-btn btn-description" data-bs-toggle="modal" data-bs-target="#descriptionModal">
+                <i class="fas fa-file-medical-alt me-2"></i>Description
+            </button>
+            <button class="result-btn btn-precaution" data-bs-toggle="modal" data-bs-target="#precautionModal">
+                <i class="fas fa-shield-alt me-2"></i>Precautions
+            </button>
+            <button class="result-btn btn-medications" data-bs-toggle="modal" data-bs-target="#medicationsModal">
+                <i class="fas fa-pills me-2"></i>Medications
+            </button>
+            <button class="result-btn btn-workouts" data-bs-toggle="modal" data-bs-target="#workoutsModal">
+                <i class="fas fa-dumbbell me-2"></i>Exercise Plan
+            </button>
+            <button class="result-btn btn-diets" data-bs-toggle="modal" data-bs-target="#dietsModal">
+                <i class="fas fa-apple-alt me-2"></i>Diet Plan
+            </button>
+        </div>
+
+        <!-- PDF Download Section -->
+        <div class="download-section">
+            <h3 class="mb-3">
+                <i class="fas fa-file-pdf me-2 text-danger"></i>Medical Report
+            </h3>
+            <p class="text-muted mb-3">
+                Download a comprehensive PDF report with all your health recommendations
+            </p>
+            <a href="{{ url_for('download_report') }}" class="btn btn-download btn-lg">
+                <i class="fas fa-download me-2"></i>Download Medical Report (PDF)
+            </a>
+            <div class="mt-3">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Report includes: Patient info, symptoms, diagnosis, medications, diet plan, exercise recommendations
+                </small>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modals for Results -->
+{% if predicted_disease %}
+
+<!-- Disease Modal -->
+<div class="modal fade" id="diseaseModal" tabindex="-1" aria-labelledby="diseaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="diseaseModalLabel">
+                    <i class="fas fa-diagnoses me-2"></i>Predicted Condition
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">{{ predicted_disease }}</h4>
+                    <p class="mb-0">This is the condition our AI system has identified based on your symptoms.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Description Modal -->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">
+                    <i class="fas fa-file-medical-alt me-2"></i>Medical Description
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="lead">{{ dis_des }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Precaution Modal -->
+<div class="modal fade" id="precautionModal" tabindex="-1" aria-labelledby="precautionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="precautionModalLabel">
+                    <i class="fas fa-shield-alt me-2"></i>Recommended Precautions
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    {% for precaution in my_precautions %}
+                        <li><i class="fas fa-check-circle me-2 text-success"></i>{{ precaution }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Medications Modal -->
+<div class="modal fade" id="medicationsModal" tabindex="-1" aria-labelledby="medicationsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="medicationsModalLabel">
+                    <i class="fas fa-pills me-2"></i>Suggested Medications
+                    {% if user_age and user_age < 18 %}
+                    <span class="badge badge-warning">PEDIATRIC</span>
+                    {% elif user_age and user_age >= 65 %}
+                    <span class="badge badge-info">SENIOR</span>
+                    {% endif %}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Important:</strong> Always consult with a healthcare professional before taking any medication.
+                </div>
+                
+                {% if user_age and user_age < 18 %}
+                <div class="age-alert mb-4">
+                    <h5><i class="fas fa-child me-2"></i>Pediatric Patient ({{ user_age }} years)</h5>
+                    <p>These medications have been adjusted for pediatric use. Always consult with a pediatrician for proper dosing.</p>
+                </div>
+                {% elif user_age and user_age >= 65 %}
+                <div class="age-alert mb-4" style="border-left-color: #3498db; background-color: #e3f2fd;">
+                    <h5><i class="fas fa-user-plus me-2"></i>Senior Patient ({{ user_age }} years)</h5>
+                    <p>These medications are appropriate for seniors. Reduced dosages may be required. Always consult with your doctor.</p>
+                </div>
+                {% endif %}
+                
+                <ul>
+                    {% for medication in medications %}
+                        <li>
+                            <i class="fas fa-capsules me-2 text-primary"></i>{{ medication }}
+                            {% if user_age and user_age < 18 and "pediatric" not in medication|lower %}
+                            <small class="text-danger d-block mt-1">
+                                <i class="fas fa-exclamation-circle me-1"></i>
+                                Requires pediatric dosing adjustment
+                            </small>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                
+                {% if personalized_notes %}
+                <div class="mt-4">
+                    <h5><i class="fas fa-clipboard-list me-2"></i>Personalized Notes</h5>
+                    <ul>
+                        {% for note in personalized_notes %}
+                            <li style="border-left-color: #f39c12;">
+                                <i class="fas fa-info-circle me-2 text-warning"></i>{{ note }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Workouts Modal -->
+<div class="modal fade" id="workoutsModal" tabindex="-1" aria-labelledby="workoutsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="workoutsModalLabel">
+                    <i class="fas fa-dumbbell me-2"></i>Recommended Exercise Plan
+                    {% if user_age and user_age < 18 %}
+                    <span class="badge badge-warning">PEDIATRIC</span>
+                    {% elif user_age and user_age >= 65 %}
+                    <span class="badge badge-info">SENIOR</span>
+                    {% endif %}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if user_age and user_age < 18 %}
+                <div class="age-alert mb-4">
+                    <h5><i class="fas fa-child me-2"></i>Pediatric Exercise Plan</h5>
+                    <p>These exercises have been modified to be safe and appropriate for children.</p>
+                </div>
+                {% elif user_age and user_age >= 65 %}
+                <div class="age-alert mb-4" style="border-left-color: #3498db; background-color: #e3f2fd;">
+                    <h5><i class="fas fa-user-plus me-2"></i>Senior Exercise Plan</h5>
+                    <p>These exercises are low-impact and appropriate for seniors. Always start slowly and consult with your doctor.</p>
+                </div>
+                {% endif %}
+                
+                <ul>
+                    {% for exercise in workout %}
+                        <li><i class="fas fa-running me-2 text-success"></i>{{ exercise }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Diets Modal -->
+<div class="modal fade" id="dietsModal" tabindex="-1" aria-labelledby="dietsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dietsModalLabel">
+                    <i class="fas fa-apple-alt me-2"></i>Recommended Diet Plan
+                    {% if user_age and user_age < 18 %}
+                    <span class="badge badge-warning">PEDIATRIC</span>
+                    {% elif user_age and user_age >= 65 %}
+                    <span class="badge badge-info">SENIOR</span>
+                    {% endif %}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if user_age and user_age < 18 %}
+                <div class="age-alert mb-4">
+                    <h5><i class="fas fa-child me-2"></i>Pediatric Diet Plan</h5>
+                    <p>These dietary recommendations are appropriate for children and support healthy growth.</p>
+                </div>
+                {% elif user_age and user_age >= 65 %}
+                <div class="age-alert mb-4" style="border-left-color: #3498db; background-color: #e3f2fd;">
+                    <h5><i class="fas fa-user-plus me-2"></i>Senior Diet Plan</h5>
+                    <p>These dietary recommendations are appropriate for seniors and support healthy aging.</p>
+                </div>
+                {% endif %}
+                
+                <ul>
+                    {% for diet in my_diet %}
+                        <li><i class="fas fa-leaf me-2 text-success"></i>{{ diet }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Symptom Selection Functionality
+    const symptomsInput = document.getElementById('symptoms');
+    const symptomButtons = document.querySelectorAll('.symptom-btn');
+    let selectedSymptoms = [];
+
+    // Add click event to all symptom buttons
+    symptomButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const symptom = this.getAttribute('data-symptom');
+            
+            if (this.classList.contains('selected')) {
+                // Remove symptom
+                this.classList.remove('selected');
+                selectedSymptoms = selectedSymptoms.filter(s => s !== symptom);
+            } else {
+                // Add symptom
+                this.classList.add('selected');
+                if (!selectedSymptoms.includes(symptom)) {
+                    selectedSymptoms.push(symptom);
+                }
+            }
+            
+            // Update input field
+            updateSymptomsInput();
+        });
+    });
+
+    function updateSymptomsInput() {
+        symptomsInput.value = selectedSymptoms.join(', ');
+    }
+
+    function clearSymptoms() {
+        selectedSymptoms = [];
+        symptomButtons.forEach(button => {
+            button.classList.remove('selected');
+        });
+        symptomsInput.value = '';
+    }
+
+    // Allow manual typing in input field
+    symptomsInput.addEventListener('input', function() {
+        const inputValue = this.value;
+        const inputSymptoms = inputValue.split(',').map(s => s.trim().toLowerCase());
+        
+        // Update button states based on input
+        symptomButtons.forEach(button => {
+            const symptom = button.getAttribute('data-symptom').toLowerCase();
+            if (inputSymptoms.includes(symptom)) {
+                button.classList.add('selected');
+            } else {
+                button.classList.remove('selected');
+            }
+        });
+    });
+
+    // Speech Recognition
+    const startSpeechRecognitionButton = document.getElementById('startSpeechRecognition');
+    const transcriptionDiv = document.getElementById('transcription');
+    const transcriptionText = document.getElementById('transcriptionText');
+
+    startSpeechRecognitionButton.addEventListener('click', startSpeechRecognition);
+
+    function startSpeechRecognition() {
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            transcriptionDiv.style.display = 'block';
+            transcriptionText.textContent = 'Listening... Please speak now';
+            startSpeechRecognitionButton.innerHTML = '<i class="fas fa-microphone-slash me-2"></i>Listening...';
+            startSpeechRecognitionButton.disabled = true;
+
+            recognition.onresult = function (event) {
+                const result = event.results[0][0].transcript;
+                transcriptionText.textContent = result;
+                symptomsInput.value = result;
+                
+                // Update button states based on speech input
+                const spokenSymptoms = result.toLowerCase().split(/[,\s]+/);
+                symptomButtons.forEach(button => {
+                    const symptom = button.getAttribute('data-symptom').toLowerCase();
+                    const symptomWords = symptom.split(' ');
+                    const isMatched = symptomWords.some(word => 
+                        spokenSymptoms.some(spoken => spoken.includes(word) || word.includes(spoken))
+                    );
+                    
+                    if (isMatched) {
+                        button.classList.add('selected');
+                        if (!selectedSymptoms.includes(button.getAttribute('data-symptom'))) {
+                            selectedSymptoms.push(button.getAttribute('data-symptom'));
+                        }
+                    }
+                });
+            };
+
+            recognition.onend = function () {
+                startSpeechRecognitionButton.innerHTML = '<i class="fas fa-microphone me-2"></i>Use Voice Input';
+                startSpeechRecognitionButton.disabled = false;
+                setTimeout(() => {
+                    transcriptionDiv.style.display = 'none';
+                }, 3000);
+            };
+
+            recognition.onerror = function(event) {
+                transcriptionText.textContent = 'Error occurred in recognition: ' + event.error;
+                startSpeechRecognitionButton.innerHTML = '<i class="fas fa-microphone me-2"></i>Use Voice Input';
+                startSpeechRecognitionButton.disabled = false;
+            };
+
+            recognition.start();
+        } else {
+            alert('Speech recognition not supported in this browser. Please use Chrome or Edge.');
+        }
+    }
+
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            if (alert.classList.contains('alert-warning')) {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }
+        });
+    }, 5000);
+</script>
+
+</body>
+</html>

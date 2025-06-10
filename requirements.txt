@@ -1,0 +1,6 @@
+Flask
+pymysql
+pandas
+numpy
+scikit-learn
+reportlab

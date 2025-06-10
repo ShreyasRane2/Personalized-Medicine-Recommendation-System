@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Health Care Center - Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #F6FFDE;
+        }
+        .result-container {
+            margin-top: 30px;
+        }
+        .toggle-button {
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar (you can reuse the code from your original page) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <!-- Navbar content here -->
+    </nav>
+
+    <div class="container my-4">
+        <h1 class="text-center text-green">Health Care Center - Results</h1>
+
+        {% if predicted_disease %}
+            <div class="result-container">
+                <!-- Buttons to toggle display of modals -->
+                <button class="btn btn-warning toggle-button" data-bs-toggle="modal" data-bs-target="#diseaseModal">Disease</button>
+                <button class="btn btn-info toggle-button" data-bs-toggle="modal" data-bs-target="#descriptionModal">Description</button>
+                <button class="btn btn-danger toggle-button" data-bs-toggle="modal" data-bs-target="#precautionModal">Precaution</button>
+                <button class="btn btn-success toggle-button" data-bs-toggle="modal" data-bs-target="#medicationsModal">Medications</button>
+                <button class="btn btn-primary toggle-button" data-bs-toggle="modal" data-bs-target="#workoutsModal">Workouts</button>
+                <button class="btn btn-secondary toggle-button" data-bs-toggle="modal" data-bs-target="#dietsModal">Diets</button>
+            </div>
+
+            <!-- Disease Modal -->
+            <div class="modal fade" id="diseaseModal" tabindex="-1" aria-labelledby="diseaseModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="diseaseModalLabel">Predicted Disease</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>{{ predicted_disease }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description Modal -->
+            <div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="descriptionModalLabel">Description</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>{{ dis_des }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Precaution Modal -->
+            <div class="modal fade" id="precautionModal" tabindex="-1" aria-labelledby="precautionModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="precautionModalLabel">Precaution</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <ul>
+                                {% for precaution in my_precautions %}
+                                    <li>{{ precaution }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medications Modal -->
+            <div class="modal fade" id="medicationsModal" tabindex="-1" aria-labelledby="medicationsModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="medicationsModalLabel">Medications</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <ul>
+                                {% for medication in medications %}
+                                    <li>{{ medication }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workouts Modal -->
+            <div class="modal fade" id="workoutsModal" tabindex="-1" aria-labelledby="workoutsModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="workoutsModalLabel">Workouts</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <ul>
+                                {% for workout in workout %}
+                                    <li>{{ workout }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diets Modal -->
+            <div class="modal fade" id="dietsModal" tabindex="-1" aria-labelledby="dietsModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="dietsModalLabel">Diets</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <ul>
+                                {% for diet in my_diet %}
+                                    <li>{{ diet }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+            <p>No prediction available. Please try again.</p>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

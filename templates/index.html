@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Medical Recommendation System</title>
+</head>
+<link rel="stylesheet" href="index.css">
+<body>
+    {% if user %}
+    <div>
+        <h3>Welcome, {{ user.username }}</h3>
+        <p>Age: {{ user.age }}</p>
+        <p>Medical History: {{ user.medical_history }}</p>
+        <p>Diet Preference: {{ user.diet }}</p>
+    </div>
+
+    <form method="POST" action="/predict">
+        <input type="text" name="symptoms" placeholder="Enter Symptoms" required><br>
+        <button type="submit">Get Medical Prediction</button>
+    </form>
+
+    {% if predicted_disease %}
+        <h3>Prediction: {{ predicted_disease }}</h3>
+    {% endif %}
+
+    <a href="/logout">Logout</a>
+    {% else %}
+    <a href="/login">Login</a> | <a href="/register">Register</a>
+    {% endif %}
+</body>
+</html>

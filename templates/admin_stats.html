@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Performance Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border-left: 5px solid #3498db;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            border-radius: 5px;
+            transition: width 0.8s ease;
+        }
+
+        .algorithm-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .algorithm-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid #e74c3c;
+        }
+
+        .algorithm-card.rf {
+            border-top-color: #e74c3c;
+        }
+
+        .algorithm-card.svc {
+            border-top-color: #9b59b6;
+        }
+
+        .algorithm-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin: 20px;
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #2980b9;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .algorithm-comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔬 Algorithm Performance Dashboard</h1>
+            <p>Real-time analysis of RandomForest vs SVC performance</p>
+        </div>
+
+        <a href="{{ url_for('dashboard') }}" class="back-button">← Back to Dashboard</a>
+
+        {% if stats.total_predictions > 0 %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.total_predictions }}</div>
+                <div class="stat-label">Total Predictions Made</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number">{{ "%.1f"|format(stats.rf_win_rate) }}%</div>
+                <div class="stat-label">RandomForest Win Rate</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ stats.rf_win_rate }}%"></div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number">{{ "%.1f"|format(stats.svc_win_rate) }}%</div>
+                <div class="stat-label">SVC Win Rate</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ stats.svc_win_rate }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="algorithm-comparison">
+                <div class="algorithm-card rf">
+                    <div class="algorithm-name">🌲 RandomForest</div>
+                    <div class="metric">
+                        <span class="metric-label">Wins:</span>
+                        <span class="metric-value">{{ stats.rf_wins }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Win Rate:</span>
+                        <span class="metric-value">{{ "%.1f"|format(stats.rf_win_rate) }}%</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Avg Confidence:</span>
+                        <span class="metric-value">{{ stats.avg_rf_confidence }}%</span>
+                    </div>
+                </div>
+
+                <div class="algorithm-card svc">
+                    <div class="algorithm-name">🎯 Support Vector Machine</div>
+                    <div class="metric">
+                        <span class="metric-label">Wins:</span>
+                        <span class="metric-value">{{ stats.svc_wins }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Win Rate:</span>
+                        <span class="metric-value">{{ "%.1f"|format(stats.svc_win_rate) }}%</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Avg Confidence:</span>
+                        <span class="metric-value">{{ stats.avg_svc_confidence }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="no-data">
+            <h2>📊 No Prediction Data Available</h2>
+            <p>Make some predictions first to see algorithm performance statistics!</p>
+            <a href="{{ url_for('dashboard') }}" class="back-button" style="margin-top: 20px;">Start Making Predictions</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Animate progress bars on load
+        window.addEventListener('load', function() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>

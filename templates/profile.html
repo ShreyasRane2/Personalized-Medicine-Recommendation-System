@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - MediCare+</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --light-bg: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--primary-color);
+            padding-top: 80px;
+            background: var(--light-bg);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .profile-content {
+            padding: 60px 0;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: none;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .history-item, .search-item {
+            background: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0 10px 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover, .search-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .history-label, .search-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .history-value, .search-value {
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-date, .search-date {
+            font-size: 0.9rem;
+            color: #adb5bd;
+        }
+
+        .medical-history-badge {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.25rem;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 2rem;
+        }
+
+        .stats-row {
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--secondary-color), #5dade2);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Edit Profile Section */
+        .edit-profile-section {
+            margin-top: 2rem;
+        }
+
+        .edit-profile-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .edit-profile-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .edit-profile-form {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .save-profile-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .save-profile-btn:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .cancel-edit-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .cancel-edit-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .age-badge {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            margin: 0.5rem 0 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+                <i class="fas fa-heartbeat me-2"></i>MediCare AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">
+                            <i class="fas fa-info-circle me-1"></i>About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact') }}">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('profile') }}">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="navbar-text text-white me-3">
+                        <i class="fas fa-user-circle me-1"></i>Hello, {{ session['username'] }}
+                    </span>
+                    <a class="btn btn-outline-light" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <section class="profile-header">
+        <div class="container">
+            <h1 class="display-5 fw-bold mb-3">
+                <i class="fas fa-user-circle me-3"></i>Welcome, {{ session['username'] }}
+            </h1>
+            <p class="lead">Manage your health profile and view your search history</p>
+        </div>
+    </section>
+
+    <!-- Profile Content -->
+    <section class="profile-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <span class="stat-number">{{ search_count }}</span>
+                            <span class="stat-label">Total Searches</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-card">
+                        <h3 class="section-title">
+                            <i class="fas fa-user-md"></i>Personal Information
+                        </h3>
+                        
+                        <div class="mb-3">
+                            <div class="search-label">
+                                <i class="fas fa-birthday-cake me-2"></i>Age:
+                            </div>
+                            <div class="age-badge">{{ age }} years</div>
+                        </div>
+                        
+                        <h3 class="section-title mt-4">
+                            <i class="fas fa-notes-medical"></i>Medical History
+                        </h3>
+                        {% if medical_history and medical_history != 'None' %}
+                            {% for condition in medical_history.split(',') %}
+                                <span class="medical-history-badge">{{ condition.strip() }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-data">
+                                <i class="fas fa-info-circle me-2"></i>No medical history recorded
+                            </div>
+                        {% endif %}
+                        
+                        <div class="edit-profile-section">
+                            <button class="btn edit-profile-btn" id="editProfileBtn">
+                                <i class="fas fa-edit me-2"></i>Edit Profile
+                            </button>
+                            
+                            <form class="edit-profile-form" id="editProfileForm" method="POST" action="{{ url_for('update_profile') }}">
+                                <div class="form-group">
+                                    <label for="age" class="form-label">
+                                        <i class="fas fa-birthday-cake me-2"></i>Age
+                                    </label>
+                                    <input type="number" class="form-control" id="age" name="age" value="{{ age }}" min="1" max="120" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-notes-medical me-2"></i>Medical History
+                                    </label>
+                                    <div class="medical-options">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="medical_history" value="Diabetes" id="diabetes" 
+                                                   {% if medical_history and 'Diabetes' in medical_history %}checked{% endif %}>
+                                            <label class="form-check-label" for="diabetes">Diabetes</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="medical_history" value="Hypertension" id="hypertension" 
+                                                   {% if medical_history and 'Hypertension' in medical_history %}checked{% endif %}>
+                                            <label class="form-check-label" for="hypertension">Hypertension</label>
+                                        </div>
+                                        <!-- <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="medical_history" value="Asthma" id="asthma" 
+                                                   {% if medical_history and 'Asthma' in medical_history %}checked{% endif %}>
+                                            <label class="form-check-label" for="asthma">Asthma</label>
+                                        </div> -->
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="medical_history" value="Heart Disease" id="heart" 
+                                                   {% if medical_history and 'Heart Disease' in medical_history %}checked{% endif %}>
+                                            <label class="form-check-label" for="heart">Heart Disease</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="medical_history" value="Kidney Disease" id="kidney" 
+                                                   {% if medical_history and 'Kidney Disease' in medical_history %}checked{% endif %}>
+                                            <label class="form-check-label" for="kidney">Kidney Disease</label>
+                                        </div>
+                                        
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="medical_history" value="None" id="none" 
+                                                   {% if medical_history == 'None' or not medical_history %}checked{% endif %}>
+                                            <label class="form-check-label" for="none">None</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex">
+                                    <button type="submit" class="btn save-profile-btn">
+                                        <i class="fas fa-save me-2"></i>Save Changes
+                                    </button>
+                                    <button type="button" class="btn cancel-edit-btn" id="cancelEditBtn">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="profile-card">
+                        <h3 class="section-title">
+                            <i class="fas fa-search"></i>Search History
+                        </h3>
+                        {% if search_history %}
+                            {% for search in search_history %}
+                            <div class="search-item">
+                                <div class="search-label">
+                                    <i class="fas fa-stethoscope me-2"></i>Symptoms Searched:
+                                </div>
+                                <div class="search-value">{{ search[0] }}</div>
+                                
+                                <div class="search-label">
+                                    <i class="fas fa-diagnoses me-2"></i>Predicted Disease:
+                                </div>
+                                <div class="search-value">{{ search[1] }}</div>
+                                
+                                <div class="search-date">
+                                    <i class="fas fa-calendar-alt me-2"></i>{{ search[2].strftime('%Y-%m-%d %H:%M:%S') if search[2] else 'Unknown date' }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-data">
+                                <i class="fas fa-clipboard-list fa-3x mb-3 d-block"></i>
+                                <h5>No search history available</h5>
+                                <p>Start by using our diagnosis tool to build your search history.</p>
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Start New Search
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Edit Profile Toggle
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const editProfileForm = document.getElementById('editProfileForm');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        
+        editProfileBtn.addEventListener('click', function() {
+            editProfileForm.style.display = 'block';
+            editProfileBtn.style.display = 'none';
+        });
+        
+        cancelEditBtn.addEventListener('click', function() {
+            editProfileForm.style.display = 'none';
+            editProfileBtn.style.display = 'block';
+            // Reset form to original values
+            location.reload();
+        });
+        
+        // Handle "None" checkbox - improved logic
+        const noneCheckbox = document.getElementById('none');
+        const otherCheckboxes = document.querySelectorAll('input[name="medical_history"]:not(#none)');
+
+        noneCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                otherCheckboxes.forEach(cb => {
+                    cb.checked = false;
+                });
+            }
+        });
+
+        otherCheckboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                if (this.checked) {
+                    noneCheckbox.checked = false;
+                }
+            });
+        });
+        
+        // Debug form submission
+        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+            const formData = new FormData(this);
+            console.log('Form submission data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+        });
+
+        // Add debugging for profile data
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Profile page loaded');
+            console.log('Age displayed:', {{ age }});
+            console.log('Medical history:', '{{ medical_history }}');
+            console.log('Search count:', {{ search_count }});
+            
+            // Add a debug button (only visible in development)
+            const profileCard = document.querySelector('.profile-card');
+            if (profileCard) {
+                const debugBtn = document.createElement('button');
+                debugBtn.className = 'btn btn-sm btn-warning mt-3';
+                debugBtn.innerHTML = '<i class="fas fa-bug me-2"></i>Debug Profile Data';
+                debugBtn.style.display = 'none'; // Hidden by default
+                
+                // Show only when pressing Ctrl+Shift+D
+                document.addEventListener('keydown', function(e) {
+                    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                        debugBtn.style.display = debugBtn.style.display === 'none' ? 'block' : 'none';
+                        e.preventDefault();
+                    }
+                });
+                
+                debugBtn.addEventListener('click', function() {
+                    fetch('/debug_user_data')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Debug profile data:', data);
+                            alert('Debug data logged to console. Check browser console for details.');
+                        })
+                        .catch(error => console.error('Error fetching debug data:', error));
+                });
+                
+                profileCard.appendChild(debugBtn);
+            }
+        });
+
+        // Add search history debug button
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add the existing debug button code...
+            
+            // Add a specific search history debug button
+            const searchHistorySection = document.querySelector('.section-title:has(i.fas.fa-search)');
+            if (searchHistorySection) {
+                const searchDebugBtn = document.createElement('button');
+                searchDebugBtn.className = 'btn btn-sm btn-info ms-auto';
+                searchDebugBtn.innerHTML = '<i class="fas fa-database me-1"></i>Check DB';
+                searchDebugBtn.style.display = 'none'; // Hidden by default
+                
+                // Show only when pressing Ctrl+Shift+S
+                document.addEventListener('keydown', function(e) {
+                    if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+                        searchDebugBtn.style.display = searchDebugBtn.style.display === 'none' ? 'inline-block' : 'none';
+                        e.preventDefault();
+                    }
+                });
+                
+                searchDebugBtn.addEventListener('click', function() {
+                    fetch('/debug_search_history')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Search history debug data:', data);
+                            alert(`Found ${data.user_count} search records in database. Check console for details.`);
+                            
+                            if (data.search_history.length === 0) {
+                                // If no records, offer to create a test record
+                                if (confirm('No search history found. Create a test record?')) {
+                                    fetch('/predict', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded',
+                                        },
+                                        body: 'symptoms=fever,headache,cough'
+                                    }).then(() => {
+                                        alert('Test search created. Refreshing page...');
+                                        location.reload();
+                                    });
+                                }
+                            }
+                        })
+                        .catch(error => console.error('Error fetching search history data:', error));
+                });
+                
+                searchHistorySection.appendChild(searchDebugBtn);
+            }
+        });
+    </script>
+</body>
+</html>
