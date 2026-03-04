@@ -1,6 +1,5 @@
+##🏥 Personalized Medical Recommendation System
 
-
-🏥 Personalized Medical Recommendation System
 📌 Overview
 
 The Personalized Medical Recommendation System is a Machine Learning–based healthcare application designed to provide personalized medical guidance based on user symptoms and medical history.
